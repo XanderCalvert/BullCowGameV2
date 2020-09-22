@@ -5,6 +5,7 @@
 void PrintIntro();
 void PlayGame();
 std::string GetGuess();
+bool AskToPlayAgain();
 
 // entry point for app
 int main() {
@@ -13,6 +14,8 @@ int main() {
 
 	// loop for the number of turns asking for guesses
 	PlayGame();
+
+	AskToPlayAgain();
 
 	return 0; // exit application
 }
@@ -42,3 +45,11 @@ std::string GetGuess() {
 	std::getline(std::cin, Guess);
 	return Guess;
 }
+
+bool AskToPlayAgain() {
+	std::cout << "Do you want to play again? (y/n) ";
+	std::string Response = "";
+	std::getline(std::cin, Response);
+
+	return (Response[0] == 'y') || (Response[0] == 'Y');
+};
