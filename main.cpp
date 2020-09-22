@@ -9,7 +9,12 @@ std::string GetGuessAndPrintBack();
 int main() {
 
 	PrintIntro();
-	GetGuessAndPrintBack();
+
+	constexpr int NUMBER_OF_TURNS = 5;
+	for (int count = 0; count <= NUMBER_OF_TURNS; count++) {
+		GetGuessAndPrintBack();
+		std::cout << std::endl;
+	}
 
 	return 0;
 }
@@ -32,5 +37,3 @@ std::string GetGuessAndPrintBack() {
 	std::cout << "You guessed the word: " << Guess << std::endl;
 	return Guess;
 }
-
-//notice me
