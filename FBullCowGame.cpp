@@ -1,27 +1,25 @@
+#pragma once
 #include "FBullCowGame.h"
+#include <map>
+#define TMap std::map
 
-
-
-int FBullCowGame::GetMaxTries() const { return MyMaxTries; }
+FBullCowGame::FBullCowGame() { Reset(); } // default constructor
 
 int FBullCowGame::GetCurrentTry() const { return MyCurrentTry; }
-
 int32 FBullCowGame::GetHiddenWordLength() const { return MyHiddenWord.length(); }
+bool FBullCowGame::IsGameWon() const { return bGameIsWon; }
 
-bool FBullCowGame::IsGameWon() const {
-	return false;
-}
-
-FBullCowGame::FBullCowGame() {
-	Reset();
+int FBullCowGame::GetMaxTries() const {
+	TMap<int32, int32> WordLengthToMaxTries{ {3,4}, {4,7}, {5,10}, {6,16}, {7,20} };
+	return WordLengthToMaxTries[MyHiddenWord.length()];
 }
 
 void FBullCowGame::Reset() {
+
+	const FString hiddenWord = "planet"; // this MUST be an isogram
+	MyHiddenWord = hiddenWord;
 	MyCurrentTry = 1;
-	constexpr int MAX_TRIES = 8;
-	const FString HIDDEN_WORD = "planet";
-	MyHiddenWord = HIDDEN_WORD;
-	MyMaxTries = MAX_TRIES;
+	bGameIsWon = false;
 	return;
 }
 
@@ -44,12 +42,19 @@ EGuessStatus FBullCowGame::CheckGuessValidity(FString Guess) const {
 	}
 }
 
-// receives valid guess and increments try
-FBullCowCount FBullCowGame::SubmitGuess(FString Guess) {
-	// increment turn 
-	MyCurrentTry++;
+bool FBullCowGame::IsLowercase(FString Word) const {
+	for (auto Letter : Word) {
+		if (!islower(Letter)) {
+			// if not a lowercase letter
+			return false;
+		}
+	}
+	return true;
+}
 
-	// setup return variable
+// receives valid guess, increments turn, and returns count
+FBullCowCount FBullCowGame::SubmitValidGuess(FString Guess) {
+	MyCurrentTry++;
 	FBullCowCount BullCowCount;
 	int32 WordLength = MyHiddenWord.length(); // assuming the same length as guess
 
@@ -68,5 +73,33 @@ FBullCowCount FBullCowGame::SubmitGuess(FString Guess) {
 			}
 		}
 	}
+	if (BullCowCount.Bulls == WordLength) {
+		bGameIsWon = true;
+	}
+	else {
+		bGameIsWon = false;
+	}
 	return BullCowCount;
 }
+
+bool FBullCowGame::IsIsogram(FString Word) const {
+	// treat 0 & 1 letter words as isograms
+	if (Word.length() <= 1) { return true; }
+	// setup map
+	TMap<char, bool> LetterSeen;
+	for (auto Letter : Word) { // for all letters of the word
+		Letter = tolower(Letter); // handle mixed case
+	// loop through all letters
+		if (LetterSeen[Letter]) {
+			return false; // we do not have an isogram at this stage
+		}
+		else {
+			LetterSeen[Letter] = true; // we do not have an isogram
+		}
+
+		// otherwise
+			//add the letter to the map as seen
+	}
+	return true; // for example when \0 is entered
+}
+
